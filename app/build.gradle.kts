@@ -6,14 +6,14 @@ plugins {
 
 android {
     namespace = "com.alterjuice.task.moviedb"
-    compileSdk = 35
+    compileSdk = ProjectConfig.compileSdk
 
     defaultConfig {
         applicationId = "com.alterjuice.task.moviedb"
-        minSdk = 26
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        minSdk = ProjectConfig.minSdk
+        targetSdk = ProjectConfig.targetSdk
+        versionCode = ProjectConfig.versionCode
+        versionName = ProjectConfig.versionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -28,11 +28,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = ProjectConfig.javaVersion
+        targetCompatibility = ProjectConfig.javaVersion
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = ProjectConfig.jvmVersion
     }
     buildFeatures {
         compose = true
