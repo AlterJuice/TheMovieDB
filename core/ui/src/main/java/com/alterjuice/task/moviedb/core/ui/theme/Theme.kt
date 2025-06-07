@@ -1,4 +1,4 @@
-package com.alterjuice.task.moviedb.ui.theme
+package com.alterjuice.task.moviedb.core.ui.theme
 
 import android.app.Activity
 import android.os.Build
