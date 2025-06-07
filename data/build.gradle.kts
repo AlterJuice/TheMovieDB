@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
 }
 
 val tmdbProps = loadProperties(MovieDBServiceProps)
@@ -45,6 +46,9 @@ android {
     kotlinOptions {
         jvmTarget = ProjectConfig.jvmVersion
     }
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 dependencies {
@@ -61,6 +65,10 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.client.logging)
+
+    implementation(libs.dagger)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
