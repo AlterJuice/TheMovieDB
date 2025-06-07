@@ -13,3 +13,7 @@ kotlin {
         jvmTarget = JvmTarget.fromTarget(ProjectConfig.jvmVersion)
     }
 }
+
+dependencies {
+    implementation(libs.kotlinx.coroutines.core)
+}

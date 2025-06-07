@@ -18,6 +18,7 @@ jetbrainsKotlinJvm = "2.0.21"
 appcompat = "1.7.0"
 material = "1.12.0"
 uiTooling = "1.8.2"
+kotlinxCoroutinesCore = "1.10.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -49,6 +50,7 @@ dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "daggerCompiler" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltAndroid" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
