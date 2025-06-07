@@ -1,8 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
 }
 
+val tmdbProps = loadProperties(MovieDBServiceProps)
 android {
     namespace = "com.alterjuice.task.moviedb"
     compileSdk = ProjectConfig.compileSdk
@@ -21,6 +23,19 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+
+        all {
+            //noinspection WrongGradleMethod
+            tmdbProps.getPropValue(MovieDBServiceProps.API_KEY, buildType = name) { key, value ->
+                buildConfigField("String", key.generalKey, value)
+            }
+            tmdbProps.getPropValue(MovieDBServiceProps.API_TOKEN, buildType = name) { key, value ->
+                buildConfigField("String", key.generalKey, value)
+            }
+            tmdbProps.getPropValue(MovieDBServiceProps.BASE_URL, buildType = name) { key, value ->
+                buildConfigField("String", key.generalKey, value)
+            }
         }
     }
     compileOptions {
