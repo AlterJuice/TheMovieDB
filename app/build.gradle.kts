@@ -31,6 +31,9 @@ android {
         sourceCompatibility = ProjectConfig.javaVersion
         targetCompatibility = ProjectConfig.javaVersion
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.15"
+    }
     kotlinOptions {
         jvmTarget = ProjectConfig.jvmVersion
     }
@@ -53,6 +56,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    implementation(project(":feature:movies"))
     implementation(project(":core:ui"))
     implementation(project(":domain"))
     implementation(project(":data"))
