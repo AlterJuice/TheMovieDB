@@ -1,7 +1,7 @@
 package com.alterjuice.task.moviedb.feature.movies.model
 
-import com.alterjuice.utils.str.Str
+import com.alterjuice.task.moviedb.core.ui.utils.BaseSideEffect
 
-sealed interface MoviesEffect {
-    data class ShowSnackbar(val message: Str) : MoviesEffect
+sealed interface MoviesEffect: BaseSideEffect {
+    data class ShareMovie(val movieUrl: String, val movieTitle: String): MoviesEffect
 }

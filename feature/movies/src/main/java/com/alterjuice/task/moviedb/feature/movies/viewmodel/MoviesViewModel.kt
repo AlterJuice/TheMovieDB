@@ -9,6 +9,7 @@ import com.alterjuice.task.moviedb.domain.usecase.GetFavoriteMoviesUseCase
 import com.alterjuice.task.moviedb.domain.usecase.GetMoviesUseCase
 import com.alterjuice.task.moviedb.domain.usecase.RemoveFromFavoritesUseCase
 import com.alterjuice.task.moviedb.feature.movies.mappers.toUI
+import com.alterjuice.task.moviedb.feature.movies.model.MoviesEffect
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesEvent
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesState
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesTab
@@ -57,6 +58,14 @@ class MoviesViewModel @Inject constructor(
             MoviesEvent.Refresh -> {}
             is MoviesEvent.RemoveFromFavorites -> removeFromFavorites(event.movieId)
             is MoviesEvent.SelectTab -> selectTab(event.tab)
+            is MoviesEvent.ShareMovie -> shareMovie(event.movieId, event.title)
+        }
+    }
+
+    private fun shareMovie(movieId: Int, title: String) {
+        viewModelScope.launch {
+            val url = "https://www.themoviedb.org/movie/${movieId}"
+            _effect.emit(MoviesEffect.ShareMovie(url, title))
         }
     }
 

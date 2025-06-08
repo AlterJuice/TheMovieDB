@@ -5,5 +5,6 @@ sealed interface MoviesEvent {
     object Refresh : MoviesEvent
     data class AddToFavorites(val movieId: Int) : MoviesEvent
     data class RemoveFromFavorites(val movieId: Int) : MoviesEvent
+    data class ShareMovie(val movieId: Int, val title: String): MoviesEvent
     data class SelectTab(val tab: MoviesTab) : MoviesEvent
 }
