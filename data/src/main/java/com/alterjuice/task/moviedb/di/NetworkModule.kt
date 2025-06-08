@@ -3,6 +3,7 @@ package com.alterjuice.task.moviedb.di
 import com.alterjuice.task.moviedb.auth.impl.StaticAuthProvider
 import com.alterjuice.task.moviedb.auth.TokenProvider
 import com.alterjuice.task.moviedb.network.factories.HttpClientFactory
+import com.alterjuice.task.moviedb.network.factories.HttpClientFactoryImpl
 import com.alterjuice.task.moviedb.network.service.MovieApiService
 import com.alterjuice.task.moviedb.network.service.MovieApiServiceImpl
 import dagger.Binds
@@ -15,16 +16,20 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal interface IDataModule {
+internal interface INetworkModule {
 
     @Binds
     @Singleton
     fun bindsTokenProvider(impl: StaticAuthProvider): TokenProvider
+
+    @Binds
+    @Singleton
+    fun bindsTokenProvider(impl: HttpClientFactoryImpl): HttpClientFactory
 }
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DataModule {
+object NetworkModule {
 
     @Provides
     @Singleton
