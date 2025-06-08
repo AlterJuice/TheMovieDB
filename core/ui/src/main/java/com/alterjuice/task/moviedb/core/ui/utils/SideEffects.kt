@@ -9,29 +9,70 @@ import com.alterjuice.utils.str.Str
 import kotlinx.coroutines.flow.Flow
 
 
-
+/**
+ * Marker interface for all side effects in MVI architecture.
+ *
+ * Side effects represent one-time UI actions that are not part of the state,
+ * such as navigation, toasts, or snackbars.
+ */
 interface BaseSideEffect {
+
+    /**
+     * A concrete implementation of [BaseSideEffect] used to display a snackbar.
+     *
+     * @param message The message to be shown.
+     */
     data class ShowSnackbarEffect(val message: Str) : BaseSideEffect
 }
 
 
-interface EffectHandler<I: BaseSideEffect> {
+/**
+ * Defines a handler for a specific type of [BaseSideEffect].
+ *
+ * @param I The specific type of side effect this handler can process.
+ */
+interface EffectHandler<E: BaseSideEffect> {
+    /**
+     * Checks whether this handler can handle the given effect.
+     *
+     * @param effect The side effect to check.
+     * @return true if this handler supports the given effect, false otherwise.
+     */
     fun canHandle(effect: BaseSideEffect): Boolean
+
+    /**
+     * Handles the given effect.
+     *
+     * @param effect The effect to be handled.
+     */
     suspend fun handle(effect: BaseSideEffect)
 
 
     companion object {
-        inline fun <reified I: BaseSideEffect> ofType(
-            crossinline block: suspend (effect: I) -> Unit
-        ) = object : EffectHandler<I> {
-            override fun canHandle(effect: BaseSideEffect): Boolean = effect is I
+        /**
+         * Creates an [EffectHandler] for a specific subtype of [BaseSideEffect].
+         *
+         * @param block A suspend lambda to handle the effect.
+         * @return An [EffectHandler] instance that handles effects of type [I].
+         */
+        inline fun <reified E: BaseSideEffect> ofType(
+            crossinline block: suspend (effect: E) -> Unit
+        ) = object : EffectHandler<E> {
+            override fun canHandle(effect: BaseSideEffect): Boolean = effect is E
             override suspend fun handle(effect: BaseSideEffect) {
-                if (effect is I) { block(effect) }
+                if (effect is E) { block(effect) }
             }
         }
     }
 }
 
+
+/**
+ * Remembers a composable-aware [EffectHandler] for a specific effect type [T].
+ *
+ * @param block A suspend lambda to handle the effect.
+ * @return A remembered [EffectHandler] instance.
+ */
 @Composable
 inline fun <reified T: BaseSideEffect> rememberEffectHandlerOfType(
     key1: Any? = true,
@@ -42,6 +83,15 @@ inline fun <reified T: BaseSideEffect> rememberEffectHandlerOfType(
     }
 }
 
+/**
+ * Collects side effects from a [Flow] and delegates them to the appropriate [EffectHandler].
+ *
+ * @param effects A [Flow] of [BaseSideEffect]s to collect.
+ * @param handlers A vararg list of [EffectHandler]s used to handle incoming effects.
+ *
+ * Only the first handler that returns true from [EffectHandler.canHandle] will process the effect.
+ * If no handler is found, an exception is thrown in DEBUG builds or a warning is logged otherwise.
+ */
 @Composable
 fun EffectsCollector(
     effects: Flow<BaseSideEffect>,
@@ -56,7 +106,7 @@ fun EffectsCollector(
                 }
             }
             if (BuildConfig.DEBUG) {
-                throw IllegalArgumentException("No handler found for effect: $effect")
+                throw IllegalStateException("No handler found for effect: $effect")
             } else {
                 Log.w("EffectsCollector", "Unhandled effect: $effect")
             }

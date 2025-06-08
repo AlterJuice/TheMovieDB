@@ -8,6 +8,15 @@ import com.alterjuice.task.moviedb.core.ui.utils.EffectHandler
 import com.alterjuice.task.moviedb.core.ui.utils.rememberEffectHandlerOfType
 import com.alterjuice.utils.str.get
 
+
+/**
+ * Provides an [EffectHandler] that shows a snackbar using the provided [SnackbarHostState].
+ *
+ * This is a specialized handler for [ShowSnackbarEffect].
+ *
+ * @param snackbarHostState The [SnackbarHostState] used to show the snackbar.
+ * @return A remembered [EffectHandler] that handles [ShowSnackbarEffect].
+ */
 @Composable
 fun rememberSnackbarEffectHandler(
     snackbarHostState: SnackbarHostState
