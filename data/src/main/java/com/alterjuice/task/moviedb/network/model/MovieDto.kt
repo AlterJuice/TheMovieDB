@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
  * @see <a href="https://developer.themoviedb.org/reference/discover-movie">Discover Movie API</a>
  * */
 @Serializable
-data class MovieDto(
+internal data class MovieDto(
     @SerialName("id") val id: Int = 0,
     @SerialName("adult") val adult: Boolean = true,
     @SerialName("backdrop_path") val backdropPath: String? = null,

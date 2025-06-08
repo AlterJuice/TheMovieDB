@@ -1,7 +1,7 @@
 package com.alterjuice.task.moviedb.di
 
-import com.alterjuice.task.moviedb.auth.impl.StaticAuthProvider
 import com.alterjuice.task.moviedb.auth.TokenProvider
+import com.alterjuice.task.moviedb.auth.impl.StaticAuthProvider
 import com.alterjuice.task.moviedb.network.factories.HttpClientFactory
 import com.alterjuice.task.moviedb.network.factories.HttpClientFactoryImpl
 import com.alterjuice.task.moviedb.network.service.MovieApiService
@@ -29,12 +29,12 @@ internal interface INetworkModule {
 
 @Module
 @InstallIn(SingletonComponent::class)
-object NetworkModule {
+internal object NetworkModule {
 
     @Provides
     @Singleton
     internal fun provideHttpClient(
-        factory: HttpClientFactory
+        factory: HttpClientFactory,
     ): HttpClient {
         return factory.create()
     }
