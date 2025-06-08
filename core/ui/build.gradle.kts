@@ -54,6 +54,8 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.compose.base)
 
+    implementation(libs.alterjuice.str.android)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -13,6 +13,7 @@ activityCompose = "1.10.1"
 composeBom = "2024.09.00"
 dagger = "2.56.2"
 daggerCompiler = "2.56.2"
+hiltNavigationCompose = "1.2.0"
 hiltAndroid = "2.56.2"
 jetbrainsKotlinJvm = "1.9.24"
 appcompat = "1.7.0"
@@ -21,6 +22,7 @@ room = "2.7.1"
 uiTooling = "1.8.2"
 paging = "3.2.1"
 kotlinxCoroutinesCore = "1.10.1"
+str = "1.0.9" # Waiting JitPack to compile 1.0.14
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -48,6 +50,8 @@ ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negoti
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+alterjuice-str-core = { module = "com.github.AlterJuice.android-utils:str-core", version.ref = "str" }
+alterjuice-str-android = { module = "com.github.AlterJuice.android-utils:str-android", version.ref = "str" }
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "daggerCompiler" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
@@ -60,6 +64,7 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "paging" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 paging-common-ktx = { module = "androidx.paging:paging-common-ktx", version.ref = "paging" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
