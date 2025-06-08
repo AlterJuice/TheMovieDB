@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 
 data class MoviesState(
-    val movies: Flow<PagingData<Movie>> = emptyFlow(),
+    val movies: Flow<PagingData<MovieUI>> = emptyFlow(),
 )

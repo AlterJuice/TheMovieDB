@@ -2,10 +2,12 @@ package com.alterjuice.task.moviedb.feature.movies.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.map
 import com.alterjuice.task.moviedb.domain.model.Movie
 import com.alterjuice.task.moviedb.domain.usecase.AddToFavoritesUseCase
 import com.alterjuice.task.moviedb.domain.usecase.GetMoviesUseCase
 import com.alterjuice.task.moviedb.domain.usecase.RemoveFromFavoritesUseCase
+import com.alterjuice.task.moviedb.feature.movies.mappers.toUI
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesEffect
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesEvent
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesState
@@ -15,6 +17,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,7 +36,11 @@ class MoviesViewModel @Inject constructor(
     val effect = _effect.asSharedFlow()
 
     init {
-        _state.update { it.copy(movies = getMoviesUseCase()) }
+        _state.update {
+            it.copy(movies = getMoviesUseCase().map { pagingData ->
+                pagingData.map { it.toUI() }
+            })
+        }
     }
 
     fun onEvent(event: MoviesEvent) {
