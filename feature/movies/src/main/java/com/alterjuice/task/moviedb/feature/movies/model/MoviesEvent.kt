@@ -1,8 +1,9 @@
 package com.alterjuice.task.moviedb.feature.movies.model
 
-import com.alterjuice.task.moviedb.domain.model.Movie
-
 
 sealed interface MoviesEvent {
-    data class ChangeFavoriteStatus(val movie: Movie) : MoviesEvent
+    object Refresh : MoviesEvent
+    data class AddToFavorites(val movieId: Int) : MoviesEvent
+    data class RemoveFromFavorites(val movieId: Int) : MoviesEvent
+    data class SelectTab(val tab: MoviesTab) : MoviesEvent
 }
