@@ -1,9 +1,12 @@
 package com.alterjuice.task.moviedb.domain.usecase
 
-import com.alterjuice.task.moviedb.domain.repository.MoviesRepository
+import com.alterjuice.task.moviedb.domain.repository.MovieRepository
+import javax.inject.Inject
 
 
-class RemoveFromFavoritesUseCase(private val repository: MoviesRepository) {
+class RemoveFromFavoritesUseCase @Inject constructor(
+    private val repository: MovieRepository,
+) {
     suspend operator fun invoke(movieID: Int) {
         repository.removeFromFavourites(movieID)
     }

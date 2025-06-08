@@ -16,4 +16,6 @@ kotlin {
 
 dependencies {
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.dagger)
+    api(libs.paging.common.ktx)
 }

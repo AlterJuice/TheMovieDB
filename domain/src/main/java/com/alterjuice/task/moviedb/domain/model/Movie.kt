@@ -9,5 +9,6 @@ data class Movie(
     val posterUrl: String?,
     val releaseDate: LocalDate,
     val voteAverage: Double = 0.0,
-    val voteCount: Int = 0
+    val voteCount: Int = 0,
+    val isFavorite: Boolean = false,
 )
