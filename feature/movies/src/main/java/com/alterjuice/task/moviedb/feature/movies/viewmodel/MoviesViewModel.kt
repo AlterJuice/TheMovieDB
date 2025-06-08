@@ -3,12 +3,12 @@ package com.alterjuice.task.moviedb.feature.movies.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.map
+import com.alterjuice.task.moviedb.core.ui.utils.BaseSideEffect
 import com.alterjuice.task.moviedb.domain.usecase.AddToFavoritesUseCase
 import com.alterjuice.task.moviedb.domain.usecase.GetFavoriteMoviesUseCase
 import com.alterjuice.task.moviedb.domain.usecase.GetMoviesUseCase
 import com.alterjuice.task.moviedb.domain.usecase.RemoveFromFavoritesUseCase
 import com.alterjuice.task.moviedb.feature.movies.mappers.toUI
-import com.alterjuice.task.moviedb.feature.movies.model.MoviesEffect
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesEvent
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesState
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesTab
@@ -36,7 +36,7 @@ class MoviesViewModel @Inject constructor(
     private val _state = MutableStateFlow(MoviesState())
     val state = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<MoviesEffect>()
+    private val _effect = MutableSharedFlow<BaseSideEffect>()
     val effect = _effect.asSharedFlow()
 
     init {
@@ -67,14 +67,14 @@ class MoviesViewModel @Inject constructor(
     private fun addToFavorite(movieId: Int) {
         viewModelScope.launch {
             addToFavoritesUseCase(movieId)
-            _effect.emit(MoviesEffect.ShowSnackbar(StrRaw("Added to favorites")))
+            _effect.emit(BaseSideEffect.ShowSnackbarEffect(StrRaw("Added to favorites")))
         }
     }
 
     private fun removeFromFavorites(movieId: Int) {
         viewModelScope.launch {
             removeFromFavoritesUseCase(movieId)
-            _effect.emit(MoviesEffect.ShowSnackbar(StrRaw("Removed from favorites")))
+            _effect.emit(BaseSideEffect.ShowSnackbarEffect(StrRaw("Removed from favorites")))
         }
     }
 }
