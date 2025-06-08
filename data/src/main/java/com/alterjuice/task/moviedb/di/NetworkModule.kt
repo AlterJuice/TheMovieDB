@@ -24,7 +24,7 @@ internal interface INetworkModule {
 
     @Binds
     @Singleton
-    fun bindsTokenProvider(impl: HttpClientFactoryImpl): HttpClientFactory
+    fun bindsHttpClientFactory(impl: HttpClientFactoryImpl): HttpClientFactory
 }
 
 @Module
