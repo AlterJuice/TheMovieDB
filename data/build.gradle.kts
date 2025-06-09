@@ -69,6 +69,8 @@ dependencies {
     implementation(libs.androidx.paging.runtime)
     implementation(libs.paging.common.ktx)
 
+    implementation(libs.kotlinx.collections.immutable)
+
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 

@@ -64,6 +64,8 @@ dependencies {
     implementation(libs.alterjuice.str.core)
     implementation(libs.alterjuice.str.android)
 
+    implementation(libs.kotlinx.collections.immutable)
+
     implementation(project(":domain"))
     implementation(project(":core:ui"))
 

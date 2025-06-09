@@ -57,6 +57,7 @@ import com.alterjuice.task.moviedb.feature.movies.ui.components.MovieTabsCompone
 import com.alterjuice.task.moviedb.feature.movies.ui.components.MoviesLazyList
 import com.alterjuice.task.moviedb.feature.movies.ui.utils.rememberShareEffectHandler
 import com.alterjuice.task.moviedb.feature.movies.viewmodel.MoviesViewModel
+import kotlinx.collections.immutable.toPersistentList
 import kotlin.contracts.ExperimentalContracts
 
 
@@ -103,7 +104,7 @@ fun MoviesScreen(
             )
         },
     ) { paddings ->
-        val tabs = remember { MoviesTab.entries }
+        val tabs = remember { MoviesTab.entries.toPersistentList() }
         val state = vm.state.collectAsStateWithLifecycle()
         val movies = state.value.movies.collectAsLazyPagingItems()
 

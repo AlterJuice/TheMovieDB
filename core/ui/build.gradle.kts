@@ -56,6 +56,7 @@ dependencies {
 
     implementation(libs.coil.compose)
     implementation(libs.coil.compose.base)
+    implementation(libs.kotlinx.collections.immutable)
 
     implementation(libs.alterjuice.str.android)
 

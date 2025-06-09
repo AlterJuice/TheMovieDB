@@ -10,6 +10,8 @@ import com.alterjuice.task.moviedb.domain.model.Movie
 import com.alterjuice.task.moviedb.domain.repository.MovieRepository
 import com.alterjuice.task.moviedb.mapper.toDomain
 import com.alterjuice.task.moviedb.network.service.MovieApiService
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -34,9 +36,9 @@ internal class MovieRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getFavoriteMovies(): Flow<List<Movie>> {
+    override fun getFavoriteMovies(): Flow<ImmutableList<Movie>> {
         return database.movieDao().getFavoriteMovies().map { entities ->
-            entities.map { it.toDomain() }
+            entities.map { it.toDomain() }.toImmutableList()
         }
     }
 

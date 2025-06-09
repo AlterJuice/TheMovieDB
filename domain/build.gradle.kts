@@ -19,6 +19,8 @@ dependencies {
     implementation(libs.dagger)
     api(libs.paging.common.ktx)
 
+    implementation(libs.kotlinx.collections.immutable)
+
     testImplementation(libs.junit)
     testImplementation(libs.test.mockk)
     testImplementation(libs.test.coroutines)

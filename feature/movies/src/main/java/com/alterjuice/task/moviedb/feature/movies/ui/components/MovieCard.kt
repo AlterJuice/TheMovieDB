@@ -28,29 +28,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.alterjuice.task.moviedb.domain.model.Movie
 import com.alterjuice.task.moviedb.feature.movies.model.MovieUI
+import com.alterjuice.task.moviedb.feature.movies.model.toMovieUIReleaseDate
 import com.alterjuice.task.moviedb.feature.movies.ui.utils.LocalImageLoader
 import java.time.LocalDate
 
-val testMovieUi = MovieUI(
-    id = 1,
-    title = "Title",
-    overview = buildString { repeat(30) { append("Overview ") } },
-    posterUrl = "https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg",
-    releaseDate = LocalDate.now(),
-    voteAverage = 5.0,
-    voteCount = 100
-)
-val testMovie = Movie(
-    id = 1,
-    title = "Title",
-    overview = buildString { repeat(30) { append("Overview ") } },
-    posterUrl = "https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg",
-    releaseDate = LocalDate.now(),
-    voteAverage = 5.0,
-    voteCount = 100
-)
+private const val MOVIE_CARD_OVERVIEW_MAX_LINES_COUNT = 5
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,7 +46,6 @@ fun MovieCard(
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     val posterHeight = 240.dp
-
     Card(
         modifier = modifier
             .animateContentSize(
@@ -108,7 +90,7 @@ fun MovieCard(
                 Text(
                     text = movie.overview,
                     style = MaterialTheme.typography.bodyMedium,
-                    maxLines = if (isExpanded) Int.MAX_VALUE else 5,
+                    maxLines = if (isExpanded) Int.MAX_VALUE else MOVIE_CARD_OVERVIEW_MAX_LINES_COUNT,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(Modifier.weight(1f))
@@ -136,7 +118,15 @@ fun MovieCard(
 @Preview
 private fun MovieCardPreview() {
     val movie = remember { mutableStateOf(
-        testMovieUi
+        MovieUI(
+            id = 1,
+            title = "Title",
+            overview = buildString { repeat(30) { append("Overview ") } },
+            posterUrl = "https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg",
+            releaseDate = LocalDate.now().toMovieUIReleaseDate(),
+            voteAverage = 5.0,
+            voteCount = 100
+        )
     )}
     MovieCard(
         modifier = Modifier,

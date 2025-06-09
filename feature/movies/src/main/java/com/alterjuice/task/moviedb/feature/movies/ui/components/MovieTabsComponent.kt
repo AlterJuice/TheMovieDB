@@ -12,13 +12,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.alterjuice.task.moviedb.core.ui.extensions.get
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesTab
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlin.collections.forEach
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MovieTabsComponent(
     modifier: Modifier = Modifier,
-    tabs: List<MoviesTab>,
+    tabs: ImmutableList<MoviesTab>,
     selectedTab: MoviesTab,
     onTabSelected: (MoviesTab) -> Unit = {},
 ) {
@@ -47,7 +49,7 @@ internal fun MovieTabsComponent(
 private fun MovieTabsComponentPreview() {
     MovieTabsComponent(
         modifier = Modifier.fillMaxWidth(),
-        tabs = remember { MoviesTab.entries },
+        tabs = remember { MoviesTab.entries.toImmutableList() },
         selectedTab = MoviesTab.FAVORITES,
         onTabSelected = { },
     )

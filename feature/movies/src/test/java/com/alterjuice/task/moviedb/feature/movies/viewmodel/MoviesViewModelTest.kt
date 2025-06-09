@@ -18,6 +18,8 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,7 +54,7 @@ class MoviesViewModelTest {
         Dispatchers.setMain(testDispatcher)
 
         every { getMoviesUseCase() } returns emptyFlow<PagingData<Movie>>()
-        every { getFavoriteMoviesUseCase() } returns emptyFlow<List<Movie>>()
+        every { getFavoriteMoviesUseCase() } returns emptyFlow<ImmutableList<Movie>>()
 
         viewModel = createViewModel()
     }
@@ -154,7 +156,7 @@ class MoviesViewModelTest {
     @Test
     fun `WHEN favorites flow from usecase emits new list THEN state SHOULD be updated`() = runTest {
         // GIVEN
-        val favoritesFlow = MutableStateFlow<List<Movie>>(emptyList())
+        val favoritesFlow = MutableStateFlow<ImmutableList<Movie>>(persistentListOf())
         every { getFavoriteMoviesUseCase() } returns favoritesFlow
 
         viewModel = createViewModel()
@@ -164,7 +166,7 @@ class MoviesViewModelTest {
 
             // WHEN
             val newFavorites =
-                listOf(Movie(1, "Favorite Movie", "", null, LocalDate.now(), isFavorite = true))
+                persistentListOf(Movie(1, "Favorite Movie", "", null, LocalDate.now(), isFavorite = true))
             favoritesFlow.emit(newFavorites)
 
             // THEN

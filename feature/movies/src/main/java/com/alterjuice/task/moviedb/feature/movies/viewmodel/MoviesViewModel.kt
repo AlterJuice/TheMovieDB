@@ -20,6 +20,7 @@ import com.alterjuice.task.moviedb.feature.movies.model.MoviesState
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesTab
 import com.alterjuice.utils.str.StrRes
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -84,7 +85,7 @@ class MoviesViewModel @Inject constructor(
         _state.update { it.copy(movies = pagerFlow) }
         refreshMovies()
         getFavoriteMoviesUseCase().onEach { favoriteMovies ->
-            val favorites = favoriteMovies.map { it.toUI() }
+            val favorites = favoriteMovies.map { it.toUI() }.toPersistentList()
             _state.update { it.copy(favoriteMovies = favorites) }
         }.launchIn(viewModelScope)
     }
