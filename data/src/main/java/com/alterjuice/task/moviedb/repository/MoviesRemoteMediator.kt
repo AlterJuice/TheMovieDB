@@ -54,7 +54,7 @@ internal class MoviesRemoteMediator(
                 val movieEntities = moviesDto.map { it.toEntity(posterBaseUrl = POSTER_BASE_URL) }
                 val keys = movieEntities.map { RemoteKeysEntity(movieId = it.id, prevKey = prevKey, nextKey = nextKey) }
                 
-                movieDao.insertAll(movieEntities)
+                movieDao.upsertAll(movieEntities)
                 remoteKeysDao.insertAll(keys)
             }
 
