@@ -1,8 +1,11 @@
-package com.alterjuice.task.moviedb.core.ui.components
+@file:OptIn(ExperimentalMaterial3Api::class)
+
+package com.alterjuice.task.moviedb.feature.movies.ui.components
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -33,9 +37,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
+import com.alterjuice.task.moviedb.domain.model.Movie
+import com.alterjuice.task.moviedb.feature.movies.model.MovieUI
 import java.time.LocalDate
 
-val testMovie = MovieUI(
+val testMovieUi = MovieUI(
+    id = 1,
+    title = "Title",
+    overview = buildString { repeat(30) { append("Overview ") } },
+    posterUrl = "https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg",
+    releaseDate = LocalDate.now(),
+    voteAverage = 5.0,
+    voteCount = 100
+)
+val testMovie = Movie(
     id = 1,
     title = "Title",
     overview = buildString { repeat(30) { append("Overview ") } },
@@ -45,16 +60,7 @@ val testMovie = MovieUI(
     voteCount = 100
 )
 
-data class MovieUI(
-    val id: Int,
-    val title: String,
-    val overview: String,
-    val posterUrl: String,
-    val releaseDate: LocalDate,
-    val voteAverage: Double = 0.0,
-    val voteCount: Int = 0,
-    val isFavourite: Boolean = false
-)
+
 
 @Composable
 fun MovieCard(
@@ -121,7 +127,7 @@ fun MovieCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                when (movie.isFavourite) {
+                when (movie.isFavorite) {
                     true -> MovieActionButton(text = "Remove", action = onRemoveFromFavourite)
                     false -> MovieActionButton(text = "Like", action = onAddToFavourite)
                 }
@@ -149,7 +155,7 @@ fun MovieActionButton(
 @Composable
 fun MovieAsyncImage(
     modifier: Modifier,
-    moviePosterUrl: String,
+    moviePosterUrl: String?,
     imageLoader: ImageLoader,
     contentDescription: String? = null
 ) {
@@ -158,7 +164,7 @@ fun MovieAsyncImage(
         contentScale = ContentScale.FillWidth,
         imageLoader = imageLoader
     )
-    androidx.compose.foundation.Image(
+    Image(
         modifier = modifier,
         painter = painter,
         contentDescription = contentDescription
@@ -169,13 +175,13 @@ fun MovieAsyncImage(
 @Preview
 private fun MovieCardPreview() {
     val movie = remember { mutableStateOf(
-        testMovie
+        testMovieUi
     )}
     MovieCard(
         modifier = Modifier,
         movie = movie.value,
         onShare = {},
-        onAddToFavourite = { movie.value = movie.value.copy(isFavourite = true) },
-        onRemoveFromFavourite = { movie.value = movie.value.copy(isFavourite = false) },
+        onAddToFavourite = { movie.value = movie.value.copy(isFavorite = true) },
+        onRemoveFromFavourite = { movie.value = movie.value.copy(isFavorite = false) },
     )
 }
