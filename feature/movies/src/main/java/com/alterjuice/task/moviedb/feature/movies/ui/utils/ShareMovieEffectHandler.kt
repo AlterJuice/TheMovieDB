@@ -9,12 +9,13 @@ import androidx.compose.ui.platform.LocalContext
 import com.alterjuice.task.moviedb.core.ui.utils.EffectHandler
 import com.alterjuice.task.moviedb.core.ui.utils.rememberEffectHandlerOfType
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesEffect
+import com.alterjuice.utils.str.get
 
 @Composable
 fun rememberShareEffectHandler(): EffectHandler<MoviesEffect.ShareMovie> {
     val context = LocalContext.current
     return rememberEffectHandlerOfType { effect ->
-        val shareText = "Look what a movie I found:\n'${effect.movieTitle}' - ${effect.movieUrl}"
+        val shareText = effect.shareDetailsMessage.get(context)
         val sendIntent = Intent(Intent.ACTION_SEND).apply {
             putExtra(Intent.EXTRA_TEXT, shareText)
             type = "text/plain"

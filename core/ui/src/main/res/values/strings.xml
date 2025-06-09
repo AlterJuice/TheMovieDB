@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="share_movie_message_prefix">Look what a movie I found:\n\'%1$s\' - %2$s</string>
+</resources>

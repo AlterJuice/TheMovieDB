@@ -3,6 +3,7 @@ package com.alterjuice.task.moviedb.feature.movies.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.map
+import com.alterjuice.task.moviedb.core.ui.R
 import com.alterjuice.task.moviedb.core.ui.utils.BaseSideEffect
 import com.alterjuice.task.moviedb.domain.usecase.AddToFavoritesUseCase
 import com.alterjuice.task.moviedb.domain.usecase.GetFavoriteMoviesUseCase
@@ -14,6 +15,7 @@ import com.alterjuice.task.moviedb.feature.movies.model.MoviesEvent
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesState
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesTab
 import com.alterjuice.utils.str.StrRaw
+import com.alterjuice.utils.str.StrRes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -65,7 +67,8 @@ class MoviesViewModel @Inject constructor(
     private fun shareMovie(movieId: Int, title: String) {
         viewModelScope.launch {
             val url = "https://www.themoviedb.org/movie/${movieId}"
-            _effect.emit(MoviesEffect.ShareMovie(url, title))
+            val shareDetails = StrRes(R.string.share_movie_message_prefix, title, url)
+            _effect.emit(MoviesEffect.ShareMovie(shareDetails))
         }
     }
 
