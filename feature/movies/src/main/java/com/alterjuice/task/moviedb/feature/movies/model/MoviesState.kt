@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 
 data class MoviesState(
-    val movies: Flow<PagingData<MovieUI>> = emptyFlow(),
+    val movies: Flow<PagingData<MovieListItem>> = emptyFlow(),
     val favoriteMovies: List<MovieUI> = emptyList(),
     val selectedTab: MoviesTab = MoviesTab.ALL
 )

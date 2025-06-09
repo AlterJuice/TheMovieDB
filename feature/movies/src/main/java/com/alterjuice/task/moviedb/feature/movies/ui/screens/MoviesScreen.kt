@@ -1,30 +1,50 @@
-@file:OptIn(ExperimentalContracts::class)
+@file:OptIn(ExperimentalContracts::class, ExperimentalMaterial3Api::class)
 
 package com.alterjuice.task.moviedb.feature.movies.ui.screens
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.alterjuice.task.moviedb.core.ui.components.BaseScreen
 import com.alterjuice.task.moviedb.core.ui.components.HorizontallyAnimatedContent
+import com.alterjuice.task.moviedb.core.ui.components.Loader
+import com.alterjuice.task.moviedb.core.ui.components.rememberLoaderOptions
 import com.alterjuice.task.moviedb.core.ui.components.rememberSnackbarEffectHandler
 import com.alterjuice.task.moviedb.core.ui.extensions.pagedItems
 import com.alterjuice.task.moviedb.core.ui.utils.EffectsCollector
+import com.alterjuice.task.moviedb.feature.movies.R
+import com.alterjuice.task.moviedb.feature.movies.model.MovieListItem
 import com.alterjuice.task.moviedb.feature.movies.model.MovieUI
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesEvent
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesTab
@@ -40,11 +60,23 @@ import kotlin.contracts.ExperimentalContracts
 @Composable
 fun MoviesScreen(
     modifier: Modifier,
-    vm: MoviesViewModel = hiltViewModel<MoviesViewModel>()
+    vm: MoviesViewModel = hiltViewModel<MoviesViewModel>(),
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val snackbarMessageEffectHandler = rememberSnackbarEffectHandler(snackbarHostState)
     val shareMovieEffectHandler = rememberShareEffectHandler()
+
+    @Composable
+    fun MovieCardContent(movie: MovieUI) {
+        MovieCard(
+            modifier = Modifier.fillMaxWidth(),
+            movie = movie,
+            onAddToFavourite = { vm.onEvent(MoviesEvent.AddToFavorites(movie.id)) },
+            onRemoveFromFavourite = { vm.onEvent(MoviesEvent.RemoveFromFavorites(movie.id)) },
+            onShare = { vm.onEvent(MoviesEvent.ShareMovie(movie.id, movie.title)) },
+        )
+    }
+
     EffectsCollector(
         effects = vm.effect,
         snackbarMessageEffectHandler,
@@ -68,6 +100,8 @@ fun MoviesScreen(
     ) { paddings ->
         val tabs = remember { MoviesTab.entries }
         val state = vm.state.collectAsStateWithLifecycle()
+        val movies = state.value.movies.collectAsLazyPagingItems()
+
         Column(
             modifier = Modifier.padding(paddings)
         ) {
@@ -77,16 +111,8 @@ fun MoviesScreen(
                 selectedTab = state.value.selectedTab,
                 onTabSelected = { vm.onEvent(MoviesEvent.SelectTab(it)) }
             )
-            @Composable fun MovieCardContent(movie: MovieUI) {
-                MovieCard(
-                    modifier = Modifier,
-                    movie = movie,
-                    onAddToFavourite = { vm.onEvent(MoviesEvent.AddToFavorites(movie.id)) },
-                    onRemoveFromFavourite = { vm.onEvent(MoviesEvent.RemoveFromFavorites(movie.id)) },
-                    onShare = { vm.onEvent(MoviesEvent.ShareMovie(movie.id, movie.title)) },
-                )
-            }
-            val movies = state.value.movies.collectAsLazyPagingItems()
+
+
             val allMoviesState = rememberLazyListState()
             val favoriteMoviesState = rememberLazyListState()
             HorizontallyAnimatedContent(
@@ -97,17 +123,33 @@ fun MoviesScreen(
             ) { target ->
                 when (target) {
                     MoviesTab.ALL -> {
-                        MoviesLazyList(
-                            modifier = Modifier,
-                            state = allMoviesState
-                        ) {
-                            pagedItems(
-                                items = movies,
-                                key = { index -> movies.peek(index)?.id?: index },
-                                itemContent = { MovieCardContent(it) }
-                            )
+                        AllMoviesTabContent(
+                            modifier = Modifier.fillMaxSize(),
+                            state = allMoviesState,
+                            onRefresh = { vm.onEvent(MoviesEvent.Refresh) },
+                            items = movies
+                        ) { listItem ->
+                            when (listItem) {
+                                is MovieListItem.Movie -> {
+                                    MovieCardContent(listItem.movie)
+                                }
+
+                                is MovieListItem.Separator -> {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().height(60.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = listItem.monthAndYear,
+                                            modifier = Modifier,
+                                            style = MaterialTheme.typography.headlineSmall
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
+
                     MoviesTab.FAVORITES -> {
                         MoviesLazyList(
                             modifier = Modifier,
@@ -126,6 +168,104 @@ fun MoviesScreen(
     }
 }
 
+@Composable
+fun AllMoviesTabContent(
+    modifier: Modifier = Modifier,
+    items: LazyPagingItems<MovieListItem>,
+    state: LazyListState,
+    onRefresh: () -> Unit,
+    movieCardItemContent: @Composable (MovieListItem) -> Unit,
+) {
+    val isRefreshing = remember {
+        derivedStateOf {
+            items.loadState.refresh is LoadState.Loading
+        }
+    }
+    val pullRefreshState = rememberPullToRefreshState()
+    PullToRefreshBox(
+        modifier = modifier,
+        isRefreshing = isRefreshing.value,
+        state = pullRefreshState,
+        onRefresh = onRefresh,
+    ) {
+        val shouldShowError = remember {
+            derivedStateOf {
+                items.loadState.refresh is LoadState.Error && items.itemCount == 0
+            }
+        }
+        val shouldShowLoader = remember {
+            derivedStateOf {
+                items.loadState.refresh is LoadState.Loading && items.itemCount == 0
+            }
+        }
+
+        if (shouldShowError.value) {
+            val error = (items.loadState.refresh as LoadState.Error).error
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    val message = if (error.localizedMessage == null) {
+                        stringResource(R.string.refresh_movies_error_occurred)
+                    } else {
+                        stringResource(R.string.refresh_movies_error_occurred_args, error.localizedMessage)
+                    }
+                    Text(text = message)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(onClick = { items.retry() }) {
+                        Text(text = stringResource(R.string.try_refresh_movies_again))
+                    }
+                }
+            }
+        } else if (shouldShowLoader.value) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Loader(
+                    modifier = Modifier,
+                    options = rememberLoaderOptions(
+                        size = 60.dp
+                    )
+                )
+            }
+        } else {
+            MoviesLazyList(
+                modifier = Modifier,
+                state = state
+            ) {
+                pagedItems(
+                    items = items,
+                    key = { index ->
+                        when (val listItem = items.peek(index)) {
+                            is MovieListItem.Movie -> listItem.movie.id
+                            is MovieListItem.Separator -> listItem.monthAndYear
+                            null -> index
+                        }
+                    },
+                    itemContent = { movieCardItemContent(it) }
+                )
+
+
+                item {
+                    when (items.loadState.append) {
+                        is LoadState.Loading -> Loader(
+                            modifier = Modifier,
+                            options = rememberLoaderOptions(
+                                size = 60.dp,
+                                padding = PaddingValues(8.dp),
+                            )
+                        )
+
+                        is LoadState.Error -> Button(
+                            modifier = Modifier,
+                            onClick = { items.retry() }
+                        ) {
+                            Text(text = stringResource(R.string.try_load_more_movies_again))
+                        }
+
+                        is LoadState.NotLoading -> Unit
+                    }
+                }
+            }
+        }
+    }
+}
 
 
 @Composable

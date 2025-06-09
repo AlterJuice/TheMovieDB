@@ -70,6 +70,6 @@ internal class MoviesRemoteMediator(
     }
 
     companion object {
-        private const val POSTER_BASE_URL = "https://image.tmdb.org/t/p/w500"
+        private const val POSTER_BASE_URL = "https://image.tmdb.org/t/p/original"
     }
 }

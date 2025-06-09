@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
@@ -20,6 +21,7 @@ fun MoviesLazyList(
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 32.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
         state = state,
         content = content
     )

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tmdb_movie_details_url_path" arg1="movieId">https://www.themoviedb.org/movie/%1$d</string>
+    <string name="share_movie_message_prefix">Look what a movie I found:\n\'%1$s\' - %2$s</string>
+    <string name="try_load_more_movies_again">Try again</string>
+    <string name="try_refresh_movies_again">Refresh</string>
+    <string name="refresh_movies_error_occurred_args">An error occurred: %1$s</string>
+    <string name="refresh_movies_error_occurred">An error occurred</string>
+    <string name="event_movie_added_to_favorites">Added to favorites</string>
+    <string name="event_movie_removed_from_favorites">Removed from favorites</string>
+</resources>
