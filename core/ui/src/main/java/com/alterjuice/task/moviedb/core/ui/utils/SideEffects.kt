@@ -96,7 +96,8 @@ inline fun <reified T: BaseSideEffect> rememberEffectHandlerOfType(
 @Composable
 fun EffectsCollector(
     effects: Flow<BaseSideEffect>,
-    vararg handlers: EffectHandler<*>
+    vararg handlers: EffectHandler<*>,
+    strategy: UnhandledEffectsStrategy = UnhandledEffectStrategyThrowException
 ) {
     LaunchedEffect(effects, handlers) {
         effects.collect { effect ->
@@ -110,12 +111,28 @@ fun EffectsCollector(
                         return@launch
                     }
                 }
-                if (BuildConfig.DEBUG) {
-                    throw IllegalStateException("No handler found for effect: $effect")
-                } else {
-                    Log.w("EffectsCollector", "Unhandled effect: $effect")
-                }
+                strategy.onUnhandled(effect)
             }
         }
+    }
+}
+
+fun interface UnhandledEffectsStrategy {
+    fun onUnhandled(effect: BaseSideEffect): Unit
+}
+
+data object UnhandledEffectStrategyThrowException: UnhandledEffectsStrategy {
+    override fun onUnhandled(effect: BaseSideEffect) {
+        throw IllegalStateException("No handler found for effect: $effect")
+    }
+}
+data object UnhandledEffectStrategyLogging: UnhandledEffectsStrategy {
+    override fun onUnhandled(effect: BaseSideEffect) {
+        Log.w("EffectsCollector", "Unhandled effect: $effect")
+    }
+}
+data object UnhandledEffectStrategyIgnore: UnhandledEffectsStrategy {
+    override fun onUnhandled(effect: BaseSideEffect) {
+        // Nothing to do
     }
 }

@@ -37,6 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.alterjuice.task.moviedb.core.ui.BuildConfig
 import com.alterjuice.task.moviedb.core.ui.components.BaseScreen
 import com.alterjuice.task.moviedb.core.ui.components.HorizontallyAnimatedContent
 import com.alterjuice.task.moviedb.core.ui.components.Loader
@@ -44,6 +45,8 @@ import com.alterjuice.task.moviedb.core.ui.components.rememberLoaderOptions
 import com.alterjuice.task.moviedb.core.ui.components.rememberSnackbarEffectHandler
 import com.alterjuice.task.moviedb.core.ui.extensions.pagedItems
 import com.alterjuice.task.moviedb.core.ui.utils.EffectsCollector
+import com.alterjuice.task.moviedb.core.ui.utils.UnhandledEffectStrategyLogging
+import com.alterjuice.task.moviedb.core.ui.utils.UnhandledEffectStrategyThrowException
 import com.alterjuice.task.moviedb.feature.movies.R
 import com.alterjuice.task.moviedb.feature.movies.model.MovieListItem
 import com.alterjuice.task.moviedb.feature.movies.model.MovieUI
@@ -81,7 +84,8 @@ fun MoviesScreen(
     EffectsCollector(
         effects = vm.effect,
         snackbarMessageEffectHandler,
-        shareMovieEffectHandler
+        shareMovieEffectHandler,
+        strategy = if (BuildConfig.DEBUG) UnhandledEffectStrategyThrowException else UnhandledEffectStrategyLogging
     )
     BaseScreen(
         modifier = modifier,
