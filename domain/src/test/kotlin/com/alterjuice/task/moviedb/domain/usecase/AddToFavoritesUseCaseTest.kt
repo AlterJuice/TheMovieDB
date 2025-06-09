@@ -20,6 +20,6 @@ class AddToFavoritesUseCaseTest {
         useCase(testMovieId)
 
         // THEN
-        coVerify(exactly = 1) { repository.addToFavourites(testMovieId) }
+        coVerify(exactly = 1) { repository.addToFavorites(testMovieId) }
     }
 }

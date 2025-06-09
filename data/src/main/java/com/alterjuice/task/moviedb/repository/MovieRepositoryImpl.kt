@@ -40,11 +40,11 @@ internal class MovieRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun removeFromFavourites(movieId: Int) {
+    override suspend fun removeFromFavorites(movieId: Int) {
         database.movieDao().updateFavoriteStatus(movieId, isFavorite = false)
     }
 
-    override suspend fun addToFavourites(movieId: Int) {
+    override suspend fun addToFavorites(movieId: Int) {
         database.movieDao().updateFavoriteStatus(movieId, isFavorite = true)
     }
 

@@ -8,6 +8,6 @@ class RemoveFromFavoritesUseCase @Inject constructor(
     private val repository: MovieRepository,
 ) {
     suspend operator fun invoke(movieID: Int) {
-        repository.removeFromFavourites(movieID)
+        repository.removeFromFavorites(movieID)
     }
 }

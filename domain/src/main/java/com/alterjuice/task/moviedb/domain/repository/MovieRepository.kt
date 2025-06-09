@@ -7,6 +7,6 @@ import kotlinx.coroutines.flow.Flow
 interface MovieRepository {
     fun getMovies(): Flow<PagingData<Movie>>
     fun getFavoriteMovies(): Flow<List<Movie>>
-    suspend fun addToFavourites(movieId: Int)
-    suspend fun removeFromFavourites(movieId: Int)
+    suspend fun addToFavorites(movieId: Int)
+    suspend fun removeFromFavorites(movieId: Int)
 }

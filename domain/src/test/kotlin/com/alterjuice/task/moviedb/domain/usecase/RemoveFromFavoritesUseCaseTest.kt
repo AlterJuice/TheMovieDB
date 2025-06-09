@@ -20,6 +20,6 @@ class RemoveFromFavoritesUseCaseTest {
         useCase(testMovieId)
 
         // THEN
-        coVerify(exactly = 1) { repository.removeFromFavourites(testMovieId) }
+        coVerify(exactly = 1) { repository.removeFromFavorites(testMovieId) }
     }
 }
