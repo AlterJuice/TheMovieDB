@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -67,9 +68,9 @@ fun MoviesScreen(
     val shareMovieEffectHandler = rememberShareEffectHandler()
 
     @Composable
-    fun MovieCardContent(movie: MovieUI) {
+    fun MovieCardContent(modifier: Modifier, movie: MovieUI) {
         MovieCard(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier,
             movie = movie,
             onAddToFavourite = { vm.onEvent(MoviesEvent.AddToFavorites(movie.id)) },
             onRemoveFromFavourite = { vm.onEvent(MoviesEvent.RemoveFromFavorites(movie.id)) },
@@ -131,7 +132,10 @@ fun MoviesScreen(
                         ) { listItem ->
                             when (listItem) {
                                 is MovieListItem.Movie -> {
-                                    MovieCardContent(listItem.movie)
+                                    MovieCardContent(
+                                        modifier = Modifier.fillMaxWidth().animateItem(),
+                                        movie = listItem.movie
+                                    )
                                 }
 
                                 is MovieListItem.Separator -> {
@@ -158,7 +162,12 @@ fun MoviesScreen(
                             items(
                                 items = state.value.favoriteMovies,
                                 key = { it.id },
-                                itemContent = { MovieCardContent(it) }
+                                itemContent = {
+                                    MovieCardContent(
+                                        modifier = Modifier.fillMaxWidth().animateItem(),
+                                        movie = it
+                                    )
+                                }
                             )
                         }
                     }
@@ -174,7 +183,7 @@ fun AllMoviesTabContent(
     items: LazyPagingItems<MovieListItem>,
     state: LazyListState,
     onRefresh: () -> Unit,
-    movieCardItemContent: @Composable (MovieListItem) -> Unit,
+    movieCardItemContent: @Composable LazyItemScope.(MovieListItem) -> Unit,
 ) {
     val isRefreshing = remember {
         derivedStateOf {
