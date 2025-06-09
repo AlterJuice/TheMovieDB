@@ -10,8 +10,23 @@ data class MovieUI(
     val title: String,
     val overview: String,
     val posterUrl: String?,
-    val releaseDate: LocalDate,
+    val releaseDate: MovieUIReleaseDate,
     val voteAverage: Double = 0.0,
     val voteCount: Int = 0,
     val isFavorite: Boolean = false
 )
+
+@Immutable
+data class MovieUIReleaseDate(
+    val year: Int,
+    val month: Int,
+    val day: Int
+)
+
+fun LocalDate.toMovieUIReleaseDate() = MovieUIReleaseDate(
+    year = this.year,
+    month = this.monthValue,
+    day = this.dayOfMonth
+)
+
+fun MovieUIReleaseDate.toLocalDate() = LocalDate.of(year, month, day)

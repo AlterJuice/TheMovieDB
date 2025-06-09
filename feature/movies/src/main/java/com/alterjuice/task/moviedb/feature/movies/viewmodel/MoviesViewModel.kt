@@ -14,10 +14,12 @@ import com.alterjuice.task.moviedb.domain.usecase.RemoveFromFavoritesUseCase
 import com.alterjuice.task.moviedb.feature.movies.R
 import com.alterjuice.task.moviedb.feature.movies.mappers.toUI
 import com.alterjuice.task.moviedb.feature.movies.model.MovieListItem
+import com.alterjuice.task.moviedb.feature.movies.model.MovieUIReleaseDate
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesEffect
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesEvent
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesState
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesTab
+import com.alterjuice.task.moviedb.feature.movies.model.toLocalDate
 import com.alterjuice.utils.str.StrRes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toPersistentList
@@ -30,10 +32,8 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
@@ -142,11 +142,11 @@ class MoviesViewModel @Inject constructor(
 
     companion object {
         private val formatter = DateTimeFormatter.ofPattern("MMMM yyyy")
-        private fun getFormattedMovieDateSeparator(groupDate: LocalDate): String {
-            return groupDate.format(formatter)
+        private fun getFormattedMovieDateSeparator(groupDate: MovieUIReleaseDate): String {
+            return groupDate.toLocalDate().format(formatter)
         }
 
-        private fun isMonthYearSame(date1: LocalDate, date2: LocalDate): Boolean {
+        private fun isMonthYearSame(date1: MovieUIReleaseDate, date2: MovieUIReleaseDate): Boolean {
             return date1.year == date2.year && date1.month == date2.month
         }
     }
