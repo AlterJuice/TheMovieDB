@@ -22,7 +22,8 @@ room = "2.7.1"
 uiTooling = "1.8.2"
 paging = "3.2.1"
 kotlinxCoroutinesCore = "1.10.1"
-str = "1.0.9" # Waiting JitPack to compile 1.0.14
+str = "1.0.14"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
