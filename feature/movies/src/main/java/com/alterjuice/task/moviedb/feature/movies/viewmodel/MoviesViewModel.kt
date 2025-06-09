@@ -54,7 +54,6 @@ class MoviesViewModel @Inject constructor(
 
     private val pagerFlow: Flow<PagingData<MovieListItem>> =
         refreshTrigger
-            .onStart { emit(Unit) }
             .flatMapLatest {
                 getMoviesUseCase()
             }.map { pagingData ->
