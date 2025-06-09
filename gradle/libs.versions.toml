@@ -22,8 +22,10 @@ room = "2.7.1"
 uiTooling = "1.8.2"
 paging = "3.2.1"
 kotlinxCoroutinesCore = "1.10.1"
-str = "1.0.14"
-
+str = "1.0.15"
+mockk = "1.13.11"
+kotlinxCoroutinesTest = "1.8.1"
+turbine = "1.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -66,6 +68,11 @@ androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.r
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 paging-common-ktx = { module = "androidx.paging:paging-common-ktx", version.ref = "paging" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+test-mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+test-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
