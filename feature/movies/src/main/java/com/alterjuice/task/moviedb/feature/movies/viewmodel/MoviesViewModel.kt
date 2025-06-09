@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -141,7 +142,7 @@ class MoviesViewModel @Inject constructor(
     }
 
     companion object {
-        private val formatter = DateTimeFormatter.ofPattern("MMMM yyyy")
+        private val formatter = DateTimeFormatter.ofPattern("MMM yyyy", Locale.ENGLISH)
         private fun getFormattedMovieDateSeparator(groupDate: MovieUIReleaseDate): String {
             return groupDate.toLocalDate().format(formatter)
         }
