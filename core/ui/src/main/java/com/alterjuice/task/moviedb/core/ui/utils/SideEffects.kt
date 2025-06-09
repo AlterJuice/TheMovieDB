@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import com.alterjuice.task.moviedb.core.ui.BuildConfig
 import com.alterjuice.utils.str.Str
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 
 /**
@@ -99,16 +100,21 @@ fun EffectsCollector(
 ) {
     LaunchedEffect(effects, handlers) {
         effects.collect { effect ->
-            for (handler in handlers) {
-                if (handler.canHandle(effect)) {
-                    handler.handle(effect)
-                    return@collect
+            launch {
+                // Handle each effect in separate job
+                // to avoid blocking the coroutine in case of using .collect { }
+                // and to avoid cancellation in case of using .collectLatest { }
+                for (handler in handlers) {
+                    if (handler.canHandle(effect)) {
+                        handler.handle(effect)
+                        return@launch
+                    }
                 }
-            }
-            if (BuildConfig.DEBUG) {
-                throw IllegalStateException("No handler found for effect: $effect")
-            } else {
-                Log.w("EffectsCollector", "Unhandled effect: $effect")
+                if (BuildConfig.DEBUG) {
+                    throw IllegalStateException("No handler found for effect: $effect")
+                } else {
+                    Log.w("EffectsCollector", "Unhandled effect: $effect")
+                }
             }
         }
     }
