@@ -5,7 +5,9 @@ It displays lists of movies with pagination, offline caching, and favorites mana
 
 
 ## 🚀 Demo
-<video src="overview/media/MoviesScreen.mp4" width=320/>
+
+https://github.com/user-attachments/assets/a0afc3fb-5b24-40c6-938b-a87bd28c3b0a
+
 
 ## ✨ Features
 - **Paginated Movie List:** Displays an infinitely scrolling list of movies, grouped by month.
