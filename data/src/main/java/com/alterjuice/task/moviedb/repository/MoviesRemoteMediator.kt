@@ -33,8 +33,7 @@ internal class MoviesRemoteMediator(
             val currentPage = when (loadType) {
                 LoadType.REFRESH -> 1
                 LoadType.PREPEND -> {
-                    val remoteKeys = getRemoteKeyForFirstItem(state)
-                    remoteKeys?.prevKey ?: return MediatorResult.Success(endOfPaginationReached = true)
+                    return MediatorResult.Success(endOfPaginationReached = true)
                 }
                 LoadType.APPEND -> {
                     val remoteKeys = getRemoteKeyForLastItem(state)
@@ -46,6 +45,7 @@ internal class MoviesRemoteMediator(
                 apiService.getMovies(page = currentPage)
             }
             Log.d("RemoteMediator", "Response: page=${response.page}, maxPage=${response.totalPages}, totalResults=${response.totalResults}")
+            Log.d("RemoteMediator", "Response items: ${response.results.joinToString(", ", "[", "]") { it.releaseDate + " " + it.title }}")
             val moviesDto = response.results
             val endOfPaginationReached = response.page >= response.totalPages
 

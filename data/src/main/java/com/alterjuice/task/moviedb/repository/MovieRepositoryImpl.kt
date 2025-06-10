@@ -26,8 +26,9 @@ internal class MovieRepositoryImpl @Inject constructor(
     override fun getMovies(): Flow<PagingData<Movie>> {
         return Pager(
             config = PagingConfig(
-                pageSize = PagingConfig.MAX_SIZE_UNBOUNDED,
-                enablePlaceholders = false
+                pageSize = 20,
+                initialLoadSize = 20,
+                enablePlaceholders = true
             ),
             remoteMediator = MoviesRemoteMediator(apiService, database),
             pagingSourceFactory = { database.movieDao().pagingSource() }

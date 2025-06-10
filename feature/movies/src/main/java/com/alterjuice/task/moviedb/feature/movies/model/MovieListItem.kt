@@ -6,6 +6,6 @@ sealed interface MovieListItem {
 }
 
 internal fun MovieListItem.lazyListKey(): Any = when (this) {
-    is MovieListItem.Movie -> movie.id
+    is MovieListItem.Movie -> movie.id.toString()
     is MovieListItem.Separator -> monthAndYear
 }

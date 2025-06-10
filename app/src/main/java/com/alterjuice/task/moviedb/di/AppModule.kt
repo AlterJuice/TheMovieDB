@@ -23,6 +23,7 @@ internal object AppModule {
     ): ImageLoader {
         return ImageLoader.Builder(context)
             .diskCachePolicy(CachePolicy.ENABLED)
+            .memoryCachePolicy(CachePolicy.ENABLED)
             .dispatcher(Executors.newFixedThreadPool(2).asCoroutineDispatcher())
             .crossfade(true)
             .build()

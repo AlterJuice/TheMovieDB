@@ -49,7 +49,6 @@ import com.alterjuice.task.moviedb.core.ui.utils.UnhandledEffectStrategyLogging
 import com.alterjuice.task.moviedb.core.ui.utils.UnhandledEffectStrategyThrowException
 import com.alterjuice.task.moviedb.feature.movies.R
 import com.alterjuice.task.moviedb.feature.movies.model.MovieListItem
-import com.alterjuice.task.moviedb.feature.movies.model.MovieUI
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesEvent
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesTab
 import com.alterjuice.task.moviedb.feature.movies.model.lazyListKey
@@ -235,12 +234,16 @@ fun AllMoviesTabContent(
             }
         } else {
             MoviesLazyList(
-                modifier = Modifier,
+                modifier = Modifier.fillMaxSize(),
                 state = state
             ) {
                 pagedItems(
                     items = items,
-                    key = { index -> items.peek(index)?.lazyListKey()?: index },
+                    key = { it.lazyListKey() },
+                    contentType = { when(it) {
+                        is MovieListItem.Movie -> "Movie"
+                        is MovieListItem.Separator -> "Separator"
+                    }},
                     itemContent = { movieCardItemContent(it) }
                 )
 
