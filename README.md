@@ -1,7 +1,7 @@
-Movie App - Promova Test Task
+## Movie App - Promova Test Task
 This is an Android application developed for the Promova test task. 
 It displays lists of movies with pagination, offline caching, and favorites management, built with a modern, scalable, and testable architecture.
-> More details: https://github.com/Promova/android-test-task/blob/main/README.mdq
+> More details: https://github.com/Promova/android-test-task/blob/main/README.md
 
 
 ## 🚀 Demo
@@ -105,6 +105,11 @@ All UseCases are covered with simple delegation tests to ensure they correctly c
 
 #### Data Layer (MoviesRepositoryTest):
 The repository is unit-tested for its simpler methods (favorites management, data mapping) to demonstrate the ability to test this layer in isolation by mocking the DAOs.
+
+
+## 🔮 Future Improvements
+#### Convention Plugins
+For further scaling of the project and elimination of duplication of code in Gradle scripts, we can implement Convention Plugins. This will centralize the configuration of all modules and simplify the addition of new features.
 
 ## 🚀 How to Build & Run
 ### 📋 Prerequisites
