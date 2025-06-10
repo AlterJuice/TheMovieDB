@@ -35,6 +35,7 @@ This ensures the application is scalable, maintainable, and testable.
 Modules:
 
 > <img src="overview/diagrams/ModulesDiagram.png" width=322 alt="Modules dependencies diagram"/>
+>
 > Modules dependencies diagram
 - :app: The main application module, responsible for assembling the app.
 - :core: Shared utilities, including UI components (BaseScreen, HorizontallyAnimatedContent, Loader), effect handlers, extensions.
@@ -62,11 +63,21 @@ A reusable and extensible system for handling one-time UI events
 The EffectsCollector composable acts as a dispatcher, delegating events to a list of specific EffectHandlers. 
 This decouples the screen from the implementation details of each effect and follows the Open/Closed principle.
 
+https://github.com/AlterJuice/TheMovieDB/blob/86cba141a03fec65114a2f9508f64074ef90040b/core/ui/src/main/java/com/alterjuice/task/moviedb/core/ui/utils/SideEffects.kt#L13-L138
+
+Preparation:
+https://github.com/AlterJuice/TheMovieDB/blob/86cba141a03fec65114a2f9508f64074ef90040b/feature/movies/src/main/java/com/alterjuice/task/moviedb/feature/movies/ui/screens/MoviesScreen.kt#L71-L73
+
+Usage:
+https://github.com/AlterJuice/TheMovieDB/blob/86cba141a03fec65114a2f9508f64074ef90040b/feature/movies/src/main/java/com/alterjuice/task/moviedb/feature/movies/ui/screens/MoviesScreen.kt#L104-L109
+
 #### Type-Safe String Resource Abstraction:
 To keep the ViewModel completely decoupled from the Android Framework (Context), 
 a custom lightweight library (Str/StrRes) was used. The ViewModel operates with type-safe StrRes
 objects containing resource IDs and arguments, while the UI layer is responsible for resolving 
 them into final strings. This makes the ViewModel highly testable and platform-agnostic.
+
+https://github.com/AlterJuice/TheMovieDB/blob/86cba141a03fec65114a2f9508f64074ef90040b/feature/movies/src/main/java/com/alterjuice/task/moviedb/feature/movies/viewmodel/MoviesViewModel.kt#L105-L114
 
 #### Compose Performance Optimization: 
 To prevent unnecessary recompositions, derivedStateOf is used to compute 
@@ -85,6 +96,7 @@ Beyond the core architecture, special attention was given to creating a dynamic 
 
 #### Reusable Animation Wrapper (HorizontallyAnimatedContent):
 To achieve a clean, pager-like slide animation between tabs, a generic HorizontallyAnimatedContent composable was created. It encapsulates the complex transitionSpec logic, allowing for a declarative and reusable implementation of horizontal transitions between different screen states.
+https://github.com/AlterJuice/TheMovieDB/blob/86cba141a03fec65114a2f9508f64074ef90040b/core/ui/src/main/java/com/alterjuice/task/moviedb/core/ui/components/HorizontallyAnimatedContent.kt#L15-L48
 
 #### Item-level Animations in Lists:
 The main movie lists leverage Modifier.animateItem() within LazyColumn to provide smooth and automatic animations for item re-ordering, insertions, and deletions, creating a more fluid user experience.
@@ -95,6 +107,7 @@ Instead of using the standard CircularProgressIndicator, a unique, fully custom 
 It uses the rememberInfiniteTransition API to orchestrate multiple, independent animations concurrently (a full 360-degree rotation combined with a variable arc sweep).
 It leverages low-level drawing APIs like drawWithCache and drawArc for maximum performance and complete visual control.
 The component is made configurable and performant by using a @Stable LoaderOptions data class and a rememberLoaderOptions factory function, following the best practices for creating reusable and skippable Compose components.
+https://github.com/AlterJuice/TheMovieDB/blob/86cba141a03fec65114a2f9508f64074ef90040b/core/ui/src/main/java/com/alterjuice/task/moviedb/core/ui/components/Loader.kt#L29-L81
 
 ## 🧪 Testing Strategy
 The focus of testing, as per the requirements, was on Unit Tests for the most critical logic.
