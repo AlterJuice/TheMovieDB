@@ -1,5 +1,6 @@
 package com.alterjuice.task.moviedb.repository
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -28,22 +29,30 @@ internal class MoviesRemoteMediator(
         state: PagingState<Int, MovieEntity>
     ): MediatorResult {
         return try {
+            Log.d("RemoteMediator", "Load call with type: $loadType")
             val currentPage = when (loadType) {
                 LoadType.REFRESH -> 1
-                LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
+                LoadType.PREPEND -> {
+                    val remoteKeys = getRemoteKeyForFirstItem(state)
+                    remoteKeys?.prevKey ?: return MediatorResult.Success(endOfPaginationReached = true)
+                }
                 LoadType.APPEND -> {
                     val remoteKeys = getRemoteKeyForLastItem(state)
                     remoteKeys?.nextKey ?: return MediatorResult.Success(endOfPaginationReached = true)
                 }
             }
+            Log.d("RemoteMediator", "Making request for page: $currentPage")
             val response = withContext(Dispatchers.IO) {
                 apiService.getMovies(page = currentPage)
             }
+            Log.d("RemoteMediator", "Response: page=${response.page}, maxPage=${response.totalPages}, totalResults=${response.totalResults}")
             val moviesDto = response.results
-            val endOfPaginationReached = moviesDto.isEmpty()
+            val endOfPaginationReached = response.page >= response.totalPages
 
             val prevKey = if (currentPage == 1) null else currentPage - 1
             val nextKey = if (endOfPaginationReached) null else currentPage + 1
+
+            Log.d("RemoteMediator", "PrevKey: $prevKey, NextKey: $nextKey, CurrentPage: $currentPage")
 
             database.withTransaction {
                 if (loadType == LoadType.REFRESH) {
@@ -60,12 +69,18 @@ internal class MoviesRemoteMediator(
 
             MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (e: Exception) {
+            Log.e("RemoteMediator", "Load failed with error", e)
             MediatorResult.Error(e)
         }
     }
 
     private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, MovieEntity>): RemoteKeysEntity? {
         return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()
+            ?.let { movie -> remoteKeysDao.getRemoteKeyByMovieId(movie.id) }
+    }
+
+    private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, MovieEntity>): RemoteKeysEntity? {
+        return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()
             ?.let { movie -> remoteKeysDao.getRemoteKeyByMovieId(movie.id) }
     }
 
