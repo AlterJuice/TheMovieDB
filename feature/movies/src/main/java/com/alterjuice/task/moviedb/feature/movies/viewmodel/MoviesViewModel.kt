@@ -14,6 +14,7 @@ import com.alterjuice.task.moviedb.domain.usecase.RemoveFromFavoritesUseCase
 import com.alterjuice.task.moviedb.feature.movies.R
 import com.alterjuice.task.moviedb.feature.movies.mappers.toUI
 import com.alterjuice.task.moviedb.feature.movies.model.MovieListItem
+import com.alterjuice.task.moviedb.feature.movies.model.MovieUI
 import com.alterjuice.task.moviedb.feature.movies.model.MovieUIReleaseDate
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesEffect
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesEvent
@@ -22,7 +23,8 @@ import com.alterjuice.task.moviedb.feature.movies.model.MoviesTab
 import com.alterjuice.task.moviedb.feature.movies.model.toLocalDate
 import com.alterjuice.utils.str.StrRes
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.toPersistentList
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -86,8 +88,9 @@ class MoviesViewModel @Inject constructor(
         _state.update { it.copy(movies = pagerFlow) }
         refreshMovies()
         getFavoriteMoviesUseCase().onEach { favoriteMovies ->
-            val favorites = favoriteMovies.map { it.toUI() }.toPersistentList()
-            _state.update { it.copy(favoriteMovies = favorites) }
+            val favorites = favoriteMovies.map { it.toUI() }
+            val groupedFavorites = groupFavoritesByMonth(favorites)
+            _state.update { it.copy(favoriteMovies = groupedFavorites) }
         }.launchIn(viewModelScope)
     }
 
@@ -139,6 +142,20 @@ class MoviesViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    private fun groupFavoritesByMonth(movies: List<MovieUI>): ImmutableList<MovieListItem> {
+        val groupedList = mutableListOf<MovieListItem>()
+        var lastHeader: String? = null
+        for (movie in movies) {
+            val header = getFormattedMovieDateSeparator(movie.releaseDate)
+            if (lastHeader != header) {
+                groupedList.add(MovieListItem.Separator(header))
+                lastHeader = header
+            }
+            groupedList.add(MovieListItem.Movie(movie))
+        }
+        return groupedList.toImmutableList()
     }
 
     companion object {

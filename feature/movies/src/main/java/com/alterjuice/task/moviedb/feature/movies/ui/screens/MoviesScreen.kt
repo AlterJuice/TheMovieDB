@@ -52,6 +52,7 @@ import com.alterjuice.task.moviedb.feature.movies.model.MovieListItem
 import com.alterjuice.task.moviedb.feature.movies.model.MovieUI
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesEvent
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesTab
+import com.alterjuice.task.moviedb.feature.movies.model.lazyListKey
 import com.alterjuice.task.moviedb.feature.movies.ui.components.MovieCard
 import com.alterjuice.task.moviedb.feature.movies.ui.components.MovieTabsComponent
 import com.alterjuice.task.moviedb.feature.movies.ui.components.MoviesLazyList
@@ -72,14 +73,32 @@ fun MoviesScreen(
     val shareMovieEffectHandler = rememberShareEffectHandler()
 
     @Composable
-    fun MovieCardContent(modifier: Modifier, movie: MovieUI) {
-        MovieCard(
-            modifier = modifier,
-            movie = movie,
-            onAddToFavourite = { vm.onEvent(MoviesEvent.AddToFavorites(movie.id)) },
-            onRemoveFromFavourite = { vm.onEvent(MoviesEvent.RemoveFromFavorites(movie.id)) },
-            onShare = { vm.onEvent(MoviesEvent.ShareMovie(movie.id, movie.title)) },
-        )
+    fun LazyItemScope.MovieListItemContent(listItem: MovieListItem) {
+        // Hardcoded Modifiers since it is inner composable function
+        when (listItem) {
+            is MovieListItem.Movie -> {
+                MovieCard(
+                    modifier = Modifier.fillMaxWidth().animateItem(),
+                    movie = listItem.movie,
+                    onAddToFavourite = { vm.onEvent(MoviesEvent.AddToFavorites(listItem.movie.id)) },
+                    onRemoveFromFavourite = { vm.onEvent(MoviesEvent.RemoveFromFavorites(listItem.movie.id)) },
+                    onShare = { vm.onEvent(MoviesEvent.ShareMovie(listItem.movie.id, listItem.movie.title)) },
+                )
+            }
+
+            is MovieListItem.Separator -> {
+                Row(
+                    modifier = Modifier.fillMaxWidth().height(60.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = listItem.monthAndYear,
+                        modifier = Modifier,
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                }
+            }
+        }
     }
 
     EffectsCollector(
@@ -133,30 +152,9 @@ fun MoviesScreen(
                             modifier = Modifier.fillMaxSize(),
                             state = allMoviesState,
                             onRefresh = { vm.onEvent(MoviesEvent.Refresh) },
-                            items = movies
-                        ) { listItem ->
-                            when (listItem) {
-                                is MovieListItem.Movie -> {
-                                    MovieCardContent(
-                                        modifier = Modifier.fillMaxWidth().animateItem(),
-                                        movie = listItem.movie
-                                    )
-                                }
-
-                                is MovieListItem.Separator -> {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth().height(60.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(
-                                            text = listItem.monthAndYear,
-                                            modifier = Modifier,
-                                            style = MaterialTheme.typography.headlineSmall
-                                        )
-                                    }
-                                }
-                            }
-                        }
+                            items = movies,
+                            movieCardItemContent = { MovieListItemContent(it) }
+                        )
                     }
 
                     MoviesTab.FAVORITES -> {
@@ -166,12 +164,9 @@ fun MoviesScreen(
                         ) {
                             items(
                                 items = state.value.favoriteMovies,
-                                key = { it.id },
-                                itemContent = {
-                                    MovieCardContent(
-                                        modifier = Modifier.fillMaxWidth().animateItem(),
-                                        movie = it
-                                    )
+                                key = { item -> item.lazyListKey() },
+                                itemContent = { listItem ->
+                                    MovieListItemContent(listItem)
                                 }
                             )
                         }
@@ -245,13 +240,7 @@ fun AllMoviesTabContent(
             ) {
                 pagedItems(
                     items = items,
-                    key = { index ->
-                        when (val listItem = items.peek(index)) {
-                            is MovieListItem.Movie -> listItem.movie.id
-                            is MovieListItem.Separator -> listItem.monthAndYear
-                            null -> index
-                        }
-                    },
+                    key = { index -> items.peek(index)?.lazyListKey()?: index },
                     itemContent = { movieCardItemContent(it) }
                 )
 

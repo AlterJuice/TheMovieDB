@@ -9,6 +9,7 @@ import com.alterjuice.task.moviedb.domain.usecase.GetFavoriteMoviesUseCase
 import com.alterjuice.task.moviedb.domain.usecase.GetMoviesUseCase
 import com.alterjuice.task.moviedb.domain.usecase.RemoveFromFavoritesUseCase
 import com.alterjuice.task.moviedb.feature.movies.R
+import com.alterjuice.task.moviedb.feature.movies.model.MovieListItem
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesEffect
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesEvent
 import com.alterjuice.task.moviedb.feature.movies.model.MoviesTab
@@ -157,6 +158,7 @@ class MoviesViewModelTest {
     fun `WHEN favorites flow from usecase emits new list THEN state SHOULD be updated`() = runTest {
         // GIVEN
         val favoritesFlow = MutableStateFlow<ImmutableList<Movie>>(persistentListOf())
+        val expectedMovie = Movie(1, "Favorite Movie", "", null, LocalDate.now(), isFavorite = true)
         every { getFavoriteMoviesUseCase() } returns favoritesFlow
 
         viewModel = createViewModel()
@@ -166,13 +168,15 @@ class MoviesViewModelTest {
 
             // WHEN
             val newFavorites =
-                persistentListOf(Movie(1, "Favorite Movie", "", null, LocalDate.now(), isFavorite = true))
+                persistentListOf(expectedMovie)
             favoritesFlow.emit(newFavorites)
 
             // THEN
             val updatedState = awaitItem()
             Assert.assertEquals(1, updatedState.favoriteMovies.size)
-            Assert.assertEquals("Favorite Movie", updatedState.favoriteMovies.first().title)
+            Assert.assertTrue(updatedState.favoriteMovies.first() is MovieListItem.Movie)
+            val actualMovie = updatedState.favoriteMovies.first() as MovieListItem.Movie
+            Assert.assertEquals("Favorite Movie", actualMovie.movie.title)
         }
     }
 

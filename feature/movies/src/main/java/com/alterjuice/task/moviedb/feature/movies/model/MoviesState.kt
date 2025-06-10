@@ -8,6 +8,6 @@ import kotlinx.coroutines.flow.emptyFlow
 
 data class MoviesState(
     val movies: Flow<PagingData<MovieListItem>> = emptyFlow(),
-    val favoriteMovies: ImmutableList<MovieUI> = persistentListOf(),
+    val favoriteMovies: ImmutableList<MovieListItem> = persistentListOf(),
     val selectedTab: MoviesTab = MoviesTab.ALL
 )
