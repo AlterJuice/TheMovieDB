@@ -28,9 +28,6 @@ android {
 
         all {
             //noinspection WrongGradleMethod
-            tmdbProps.getPropValue(MovieDBServiceProps.API_KEY, buildType = name) { key, value ->
-                buildConfigField("String", key.generalKey, value)
-            }
             tmdbProps.getPropValue(MovieDBServiceProps.API_TOKEN, buildType = name) { key, value ->
                 buildConfigField("String", key.generalKey, value)
             }
