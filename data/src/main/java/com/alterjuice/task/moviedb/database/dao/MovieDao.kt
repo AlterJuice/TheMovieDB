@@ -14,7 +14,11 @@ internal interface MovieDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(movies: List<MovieEntity>)
 
-    @Query("SELECT * FROM movies ORDER BY releaseDate DESC")
+    @Query("""
+        SELECT * FROM movies
+        INNER JOIN remote_keys ON movies.id = remote_keys.movieId
+        ORDER BY movies.releaseDate DESC
+    """)
     fun pagingSource(): PagingSource<Int, MovieEntity>
 
     @Query("DELETE FROM movies WHERE isFavorite = 0")
