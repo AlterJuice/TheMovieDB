@@ -16,11 +16,20 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-
+/**
+ * Implementation of [HttpClientFactory] that creates and configures a Ktor [HttpClient] with necessary
+ * plugins for logging, JSON serialization, default request base URL, and authentication.
+ *
+ * @property tokenProvider Supplies authentication tokens for request headers
+ */
 internal class HttpClientFactoryImpl @Inject constructor(
     private val tokenProvider: TokenProvider
 ): HttpClientFactory {
 
+    /**
+     * Creates a configured [HttpClient] using the CIO engine with logging, content negotiation,
+     * default request settings, and authentication plugin installed.
+     */
     override fun create(): HttpClient {
         return HttpClient(CIO) {
             installLogging()

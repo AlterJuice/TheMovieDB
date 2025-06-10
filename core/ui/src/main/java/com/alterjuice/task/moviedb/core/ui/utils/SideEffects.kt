@@ -87,11 +87,12 @@ inline fun <reified T: BaseSideEffect> rememberEffectHandlerOfType(
 /**
  * Collects side effects from a [Flow] and delegates them to the appropriate [EffectHandler].
  *
- * @param effects A [Flow] of [BaseSideEffect]s to collect.
- * @param handlers A vararg list of [EffectHandler]s used to handle incoming effects.
- *
- * Only the first handler that returns true from [EffectHandler.canHandle] will process the effect.
- * If no handler is found, an exception is thrown in DEBUG builds or a warning is logged otherwise.
+ * @param effects The [Flow] of [BaseSideEffect]s to collect and process.
+ * @param handlers A vararg list of [EffectHandler]s that will be checked in order to handle each effect.
+ *                 The first handler that returns `true` from [EffectHandler.canHandle] will process the effect.
+ * @param strategy The strategy to use when no handler is found for an effect.
+ *                 Defaults to [UnhandledEffectStrategyThrowException], which throws an [IllegalStateException].
+ *                 Use [UnhandledEffectStrategyLogging] to log a warning or [UnhandledEffectStrategyIgnore] to silently drop unhandled effects.
  */
 @Composable
 fun EffectsCollector(
@@ -102,9 +103,9 @@ fun EffectsCollector(
     LaunchedEffect(effects, handlers) {
         effects.collect { effect ->
             launch {
-                // Handle each effect in separate job
-                // to avoid blocking the coroutine in case of using .collect { }
-                // and to avoid cancellation in case of using .collectLatest { }
+                // Handle each effect in a separate job to:
+                // - Avoid blocking the coroutine when using `.collect { }`
+                // - Avoid cancellation issues when using `.collectLatest { }`
                 for (handler in handlers) {
                     if (handler.canHandle(effect)) {
                         handler.handle(effect)
@@ -116,21 +117,51 @@ fun EffectsCollector(
         }
     }
 }
-
+/**
+ * A functional interface defining the strategy to handle unprocessed [BaseSideEffect]s in [EffectsCollector].
+ *
+ * Implementations define how unhandled effects should be treated, such as throwing exceptions,
+ * logging warnings, or ignoring them entirely.
+ */
 fun interface UnhandledEffectsStrategy {
+    /**
+     * Executes the strategy for the specified unhandled [BaseSideEffect].
+     *
+     * @param effect The unprocessed side effect to handle.
+     */
     fun onUnhandled(effect: BaseSideEffect): Unit
 }
 
+/**
+ * Strategy that throws an [IllegalStateException] when an [BaseSideEffect] is unhandled.
+ *
+ * This is the default behavior and ensures early detection of missing effect handlers
+ * during development by throwing an exception.
+ */
 data object UnhandledEffectStrategyThrowException: UnhandledEffectsStrategy {
     override fun onUnhandled(effect: BaseSideEffect) {
         throw IllegalStateException("No handler found for effect: $effect")
     }
 }
+
+/**
+ * Strategy that logs a warning when an [BaseSideEffect] is unhandled.
+ *
+ * This is useful in production environments to log missing effect handlers without interrupting
+ * execution. Uses [android.util.Log.w] to log to "EffectsCollector".
+ */
 data object UnhandledEffectStrategyLogging: UnhandledEffectsStrategy {
     override fun onUnhandled(effect: BaseSideEffect) {
         Log.w("EffectsCollector", "Unhandled effect: $effect")
     }
 }
+
+/**
+ * Strategy that silently ignores unhandled [BaseSideEffect]s.
+ *
+ * This is useful when effects may be optional or when missing handlers are expected behavior.
+ * No warnings or exceptions will be generated.
+ */
 data object UnhandledEffectStrategyIgnore: UnhandledEffectsStrategy {
     override fun onUnhandled(effect: BaseSideEffect) {
         // Nothing to do

@@ -5,9 +5,12 @@ import kotlinx.serialization.Serializable
 
 
 /**
+ * Data class representing a movie entity as returned by the The Movie Database (TMDb) API.
+ * This class is used to deserialize movie data from the Discover Movie endpoint and
+ * maps JSON properties to Kotlin fields using Kotlinx.Serialization annotations.
  *
  * @see <a href="https://developer.themoviedb.org/reference/discover-movie">Discover Movie API</a>
- * */
+ */
 @Serializable
 internal data class MovieDto(
     @SerialName("id") val id: Int = 0,
