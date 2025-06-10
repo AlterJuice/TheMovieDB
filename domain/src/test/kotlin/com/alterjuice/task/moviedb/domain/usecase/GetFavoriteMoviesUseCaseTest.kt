@@ -5,6 +5,7 @@ import com.alterjuice.task.moviedb.domain.repository.MovieRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Assert
 import org.junit.Test
@@ -28,7 +29,7 @@ class GetFavoriteMoviesUseCaseTest {
             voteCount = 567,
             isFavorite = true
         )
-        val fakeFavorites = listOf(fakeFavoriteMovie)
+        val fakeFavorites = persistentListOf(fakeFavoriteMovie)
         val expectedFlow = flowOf(fakeFavorites)
 
         every { repository.getFavoriteMovies() } returns expectedFlow

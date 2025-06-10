@@ -173,9 +173,10 @@ class MoviesViewModelTest {
 
             // THEN
             val updatedState = awaitItem()
-            Assert.assertEquals(1, updatedState.favoriteMovies.size)
-            Assert.assertTrue(updatedState.favoriteMovies.first() is MovieListItem.Movie)
-            val actualMovie = updatedState.favoriteMovies.first() as MovieListItem.Movie
+            Assert.assertEquals(2, updatedState.favoriteMovies.size)
+            Assert.assertTrue(updatedState.favoriteMovies[0] is MovieListItem.Separator)
+            Assert.assertTrue(updatedState.favoriteMovies[1] is MovieListItem.Movie)
+            val actualMovie = updatedState.favoriteMovies[1] as MovieListItem.Movie
             Assert.assertEquals("Favorite Movie", actualMovie.movie.title)
         }
     }
