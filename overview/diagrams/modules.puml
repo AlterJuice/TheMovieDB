@@ -1,0 +1,9 @@
+@startuml
+:app --> :feature:movies
+:app --> :core:ui
+:app --> :domain
+:app --> :data
+:data --> :domain
+:feature:movies --> :domain
+:feature:movies --> :core:ui
+@enduml
