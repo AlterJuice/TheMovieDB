@@ -5,6 +5,7 @@ package com.alterjuice.task.moviedb.feature.movies.ui.components
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -13,8 +14,14 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alterjuice.task.moviedb.feature.movies.model.MovieUI
+import com.alterjuice.task.moviedb.feature.movies.model.MovieUIRating
 import com.alterjuice.task.moviedb.feature.movies.model.toMovieUIReleaseDate
 import com.alterjuice.task.moviedb.feature.movies.ui.utils.LocalImageLoader
 import java.time.LocalDate
@@ -80,11 +88,31 @@ fun MovieCard(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
-                Text(
-                    text = movie.voteAverage.toString(),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = movie.rating.value,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(Modifier.padding(10.dp)
+                        .size(4.dp)
+                        .background(MaterialTheme.colorScheme.primary, CircleShape)
+                    )
+                    Icon(
+                        modifier = Modifier.size(16.dp),
+                        imageVector = Icons.Default.ThumbUp,
+                        contentDescription = "ThumbUp Icon",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(Modifier.width(5.dp))
+                    Text(
+                        text = movie.voteCount.toString(),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
@@ -124,7 +152,7 @@ private fun MovieCardPreview() {
             overview = buildString { repeat(30) { append("Overview ") } },
             posterUrl = "https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg",
             releaseDate = LocalDate.now().toMovieUIReleaseDate(),
-            voteAverage = 5.0,
+            rating = MovieUIRating(5.0),
             voteCount = 100
         )
     )}
