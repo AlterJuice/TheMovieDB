@@ -25,6 +25,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -190,6 +191,13 @@ fun AllMoviesTabContent(
         }
     }
     val pullRefreshState = rememberPullToRefreshState()
+    LaunchedEffect(items.loadState.refresh) {
+        // Requests scroll to first element
+        if (items.loadState.refresh is LoadState.NotLoading && items.itemCount > 0) {
+            state.animateScrollToItem(0)
+        }
+    }
+
     PullToRefreshBox(
         modifier = modifier,
         isRefreshing = isRefreshing.value,
