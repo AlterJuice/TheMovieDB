@@ -41,4 +41,11 @@ sealed interface MoviesEvent {
      * @property tab The [MoviesTab] representing the user's selected tab option.
      */
     data class SelectTab(val tab: MoviesTab) : MoviesEvent
+    
+    /**
+     * Data class for the event of an error occurring during a paging operation.
+     *
+     * @property error The [Throwable] that occurred during the paging process.
+     */
+    data class PagingError(val error: Throwable): MoviesEvent
 }

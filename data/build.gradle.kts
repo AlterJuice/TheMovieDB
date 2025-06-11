@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.material)
 
     implementation(project(":domain"))
+    implementation(project(":core:errors"))
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.ktor.client.core)

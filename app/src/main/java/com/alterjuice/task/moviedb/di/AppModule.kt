@@ -3,6 +3,8 @@ package com.alterjuice.task.moviedb.di
 import android.content.Context
 import coil.ImageLoader
 import coil.request.CachePolicy
+import com.alterjuice.task.moviedb.errors.GlobalErrorMessagesProvider
+import com.alterjuice.task.moviedb.errors.RootAppErrorMessagesProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,6 +17,14 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 internal object AppModule {
+
+    @Provides
+    @Singleton
+    internal fun provideRootMessagesHandler(): RootAppErrorMessagesProvider {
+        return RootAppErrorMessagesProvider.Builder()
+            .registryProvider(GlobalErrorMessagesProvider)
+            .build()
+    }
 
     @Provides
     @Singleton

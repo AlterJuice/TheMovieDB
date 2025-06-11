@@ -9,10 +9,13 @@ import androidx.room.withTransaction
 import com.alterjuice.task.moviedb.database.AppDatabase
 import com.alterjuice.task.moviedb.database.model.MovieEntity
 import com.alterjuice.task.moviedb.database.model.RemoteKeysEntity
+import com.alterjuice.task.moviedb.errors.GlobalError
 import com.alterjuice.task.moviedb.mapper.toEntity
 import com.alterjuice.task.moviedb.network.service.MovieApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 @OptIn(ExperimentalPagingApi::class)
 internal class MoviesRemoteMediator(
@@ -68,6 +71,10 @@ internal class MoviesRemoteMediator(
             }
 
             MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
+        } catch (e: UnknownHostException) {
+            MediatorResult.Error(GlobalError.ConnectionError.Issue.NO_INTERNET())
+        } catch (e: SocketTimeoutException) {
+            MediatorResult.Error(GlobalError.ConnectionError.Issue.BAD_INTERNET())
         } catch (e: Exception) {
             Log.e("RemoteMediator", "Load failed with error", e)
             MediatorResult.Error(e)
