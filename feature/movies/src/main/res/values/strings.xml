@@ -4,8 +4,12 @@
     <string name="share_movie_message_prefix">Look what a movie I found:\n\'%1$s\' - %2$s</string>
     <string name="try_load_more_movies_again">Try again</string>
     <string name="try_refresh_movies_again">Refresh</string>
-    <string name="refresh_movies_error_occurred_args">An error occurred: %1$s</string>
-    <string name="refresh_movies_error_occurred">An error occurred</string>
     <string name="event_movie_added_to_favorites">Added to favorites</string>
     <string name="event_movie_removed_from_favorites">Removed from favorites</string>
+
+
+    <string name="unknown_error_args">An error occurred: %1$s</string>
+    <string name="unknown_error">An error occurred</string>
+    <string name="global_error_no_internet_connection">No internet connection</string>
+    <string name="global_error_bad_internet_connection">Bad internet connection</string>
 </resources>

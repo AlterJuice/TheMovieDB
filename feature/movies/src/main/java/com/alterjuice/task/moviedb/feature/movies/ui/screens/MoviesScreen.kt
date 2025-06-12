@@ -2,6 +2,7 @@
 
 package com.alterjuice.task.moviedb.feature.movies.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,6 +28,7 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,6 +46,7 @@ import com.alterjuice.task.moviedb.core.ui.components.HorizontallyAnimatedConten
 import com.alterjuice.task.moviedb.core.ui.components.Loader
 import com.alterjuice.task.moviedb.core.ui.components.rememberLoaderOptions
 import com.alterjuice.task.moviedb.core.ui.components.rememberSnackbarEffectHandler
+import com.alterjuice.task.moviedb.core.ui.extensions.get
 import com.alterjuice.task.moviedb.core.ui.extensions.pagedItems
 import com.alterjuice.task.moviedb.core.ui.utils.EffectsCollector
 import com.alterjuice.task.moviedb.core.ui.utils.UnhandledEffectStrategyLogging
@@ -58,6 +61,7 @@ import com.alterjuice.task.moviedb.feature.movies.ui.components.MovieTabsCompone
 import com.alterjuice.task.moviedb.feature.movies.ui.components.MoviesLazyList
 import com.alterjuice.task.moviedb.feature.movies.ui.utils.rememberShareEffectHandler
 import com.alterjuice.task.moviedb.feature.movies.viewmodel.MoviesViewModel
+import com.alterjuice.utils.str.Str
 import kotlinx.collections.immutable.toPersistentList
 import kotlin.contracts.ExperimentalContracts
 
@@ -152,6 +156,8 @@ fun MoviesScreen(
                             modifier = Modifier.fillMaxSize(),
                             state = allMoviesState,
                             onRefresh = { vm.onEvent(MoviesEvent.Refresh) },
+                            pagingError = state.value.pagingError,
+                            onError = vm::onEvent,
                             items = movies,
                             movieCardItemContent = { MovieListItemContent(it) }
                         )
@@ -182,7 +188,9 @@ fun AllMoviesTabContent(
     modifier: Modifier = Modifier,
     items: LazyPagingItems<MovieListItem>,
     state: LazyListState,
+    pagingError: Str?,
     onRefresh: () -> Unit,
+    onError: (MoviesEvent.PagingError) -> Unit,
     movieCardItemContent: @Composable LazyItemScope.(MovieListItem) -> Unit,
 ) {
     val isRefreshing = remember {
@@ -190,6 +198,14 @@ fun AllMoviesTabContent(
             items.loadState.refresh is LoadState.Loading
         }
     }
+
+    LaunchedEffect(key1 = items.loadState.refresh) {
+        val refreshState = items.loadState.refresh
+        if (refreshState is LoadState.Error) {
+            onError(MoviesEvent.PagingError(refreshState.error))
+        }
+    }
+
     val pullRefreshState = rememberPullToRefreshState()
     LaunchedEffect(items.loadState.refresh) {
         // Requests scroll to first element
@@ -204,29 +220,18 @@ fun AllMoviesTabContent(
         state = pullRefreshState,
         onRefresh = onRefresh,
     ) {
-        val shouldShowError = remember {
-            derivedStateOf {
-                items.loadState.refresh is LoadState.Error && items.itemCount == 0
-            }
-        }
         val shouldShowLoader = remember {
             derivedStateOf {
                 items.loadState.refresh is LoadState.Loading && items.itemCount == 0
             }
         }
 
-        if (shouldShowError.value) {
-            val error = (items.loadState.refresh as LoadState.Error).error
+        if (pagingError != null) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    val message = if (error.localizedMessage == null) {
-                        stringResource(R.string.refresh_movies_error_occurred)
-                    } else {
-                        stringResource(R.string.refresh_movies_error_occurred_args, error.localizedMessage)
-                    }
-                    Text(text = message)
+                    Text(text = pagingError.get())
                     Spacer(modifier = Modifier.height(8.dp))
-                    Button(onClick = { items.retry() }) {
+                    Button(onClick = onRefresh) {
                         Text(text = stringResource(R.string.try_refresh_movies_again))
                     }
                 }

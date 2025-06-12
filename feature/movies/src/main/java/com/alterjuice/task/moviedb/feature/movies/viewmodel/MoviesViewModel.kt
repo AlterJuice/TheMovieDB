@@ -11,6 +11,9 @@ import com.alterjuice.task.moviedb.domain.usecase.AddToFavoritesUseCase
 import com.alterjuice.task.moviedb.domain.usecase.GetFavoriteMoviesUseCase
 import com.alterjuice.task.moviedb.domain.usecase.GetMoviesUseCase
 import com.alterjuice.task.moviedb.domain.usecase.RemoveFromFavoritesUseCase
+import com.alterjuice.task.moviedb.errors.GlobalError
+import com.alterjuice.task.moviedb.errors.RootAppErrorMessagesProvider
+import com.alterjuice.task.moviedb.errors.isAppError
 import com.alterjuice.task.moviedb.feature.movies.R
 import com.alterjuice.task.moviedb.feature.movies.mappers.toUI
 import com.alterjuice.task.moviedb.feature.movies.model.MovieListItem
@@ -46,6 +49,7 @@ class MoviesViewModel @Inject constructor(
     getFavoriteMoviesUseCase: GetFavoriteMoviesUseCase,
     private val addToFavoritesUseCase: AddToFavoritesUseCase,
     private val removeFromFavoritesUseCase: RemoveFromFavoritesUseCase,
+    private val appErrorsHandler: RootAppErrorMessagesProvider
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MoviesState())
@@ -101,7 +105,13 @@ class MoviesViewModel @Inject constructor(
             is MoviesEvent.RemoveFromFavorites -> removeFromFavorites(event.movieId)
             is MoviesEvent.SelectTab -> selectTab(event.tab)
             is MoviesEvent.ShareMovie -> shareMovie(event.movieId, event.title)
+            is MoviesEvent.PagingError -> setError(event.error)
         }
+    }
+
+    private fun setError(error: Throwable) {
+        val appError = if (error.isAppError()) error else GlobalError.Unknown(error)
+        _state.update { it.copy(pagingError = appErrorsHandler.provideMessage(appError)) }
     }
 
     private fun shareMovie(movieId: Int, title: String) {
@@ -114,6 +124,7 @@ class MoviesViewModel @Inject constructor(
 
     private fun refreshMovies() {
         viewModelScope.launch {
+            _state.update { it.copy(pagingError = null) }
             refreshTrigger.emit(Unit)
         }
     }

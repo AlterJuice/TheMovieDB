@@ -69,6 +69,7 @@ dependencies {
 
     implementation(project(":domain"))
     implementation(project(":core:ui"))
+    implementation(project(":core:errors"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

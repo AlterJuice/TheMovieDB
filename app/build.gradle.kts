@@ -66,6 +66,7 @@ dependencies {
     ksp(libs.hilt.compiler)
 
     implementation(libs.coil.compose)
+    implementation(libs.alterjuice.str.android)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -77,6 +78,7 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":domain"))
     implementation(project(":data"))
+    implementation(project(":core:errors"))
 
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
