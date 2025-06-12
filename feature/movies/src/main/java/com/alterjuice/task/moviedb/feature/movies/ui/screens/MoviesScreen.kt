@@ -148,7 +148,7 @@ fun MoviesScreen(
                 modifier = Modifier.weight(1f),
                 contentAlignment = Alignment.Center,
                 targetState = state.value.selectedTab,
-                stateToOrderIndex = { it.ordinal }
+                stateToOrderIndex = { tabs.indexOf(it) }
             ) { target ->
                 when (target) {
                     MoviesTab.ALL -> {
