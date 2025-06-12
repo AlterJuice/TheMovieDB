@@ -213,7 +213,13 @@ fun AllMoviesTabContent(
             state.animateScrollToItem(0)
         }
     }
-
+    val visibleItemsInfo by remember {
+        derivedStateOf { state.layoutInfo.visibleItemsInfo }
+    }
+    LaunchedEffect(visibleItemsInfo) {
+        val indices = visibleItemsInfo.map { it.index to it.key }.joinToString(", ")
+        Log.d("LazyListDebug", "Visible items indices: [$indices]")
+    }
     PullToRefreshBox(
         modifier = modifier,
         isRefreshing = isRefreshing.value,

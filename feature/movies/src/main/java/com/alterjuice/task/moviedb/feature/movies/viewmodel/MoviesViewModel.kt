@@ -7,6 +7,7 @@ import androidx.paging.cachedIn
 import androidx.paging.insertSeparators
 import androidx.paging.map
 import com.alterjuice.task.moviedb.core.ui.utils.BaseSideEffect
+import com.alterjuice.task.moviedb.domain.model.Movie
 import com.alterjuice.task.moviedb.domain.usecase.AddToFavoritesUseCase
 import com.alterjuice.task.moviedb.domain.usecase.GetFavoriteMoviesUseCase
 import com.alterjuice.task.moviedb.domain.usecase.GetMoviesUseCase
@@ -59,13 +60,23 @@ class MoviesViewModel @Inject constructor(
     val effect = _effect.asSharedFlow()
 
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1)
-
+    private val ma = LinkedHashSet<Int>()
     private val pagerFlow: Flow<PagingData<MovieListItem>> =
         refreshTrigger
             .flatMapLatest {
                 getMoviesUseCase()
-            }.map { pagingData ->
-                val pagingMappedData = pagingData.map { MovieListItem.Movie(it.toUI()) }
+            }.map { pagingData: PagingData<Movie> ->
+
+                val pagingMappedData = pagingData.map {
+                    val index: Int
+                    if (ma.contains(it.id)) {
+                        index = ma.indexOf(it.id)
+                    } else {
+                        ma.add(it.id)
+                        index = ma.indexOf(it.id)
+                    }
+                    MovieListItem.Movie(it.toUI(index))
+                }
                 pagingMappedData.insertSeparators { before: MovieListItem.Movie?, after: MovieListItem.Movie? ->
                     when {
                         /* No separators need in end of list */
