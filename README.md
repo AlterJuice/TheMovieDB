@@ -1,8 +1,4 @@
-## Movie App - Promova Test Task
-This is an Android application developed for the Promova test task. 
-It displays lists of movies with pagination, offline caching, and favorites management, built with a modern, scalable, and testable architecture.
-> More details: https://github.com/Promova/android-test-task/blob/main/README.md
-
+## Movie App
 
 ## 🚀 Demo
 
